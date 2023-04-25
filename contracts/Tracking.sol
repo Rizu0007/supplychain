@@ -6,7 +6,7 @@ contract Tracking{
 
     struct Shipment{
         address sender;
-        address recevier;
+        address receiver;
         uint256 pickupTime;
         uint256 deliveryTime;
         uint256 distance;
@@ -16,12 +16,12 @@ contract Tracking{
 
     }
 
-    mapping(address =>Shipment[]) public Shipments;
+    mapping(address =>Shipment[]) public shipments;
     uint256 public ShipmentCount;
      
-struct typeshipment {
+struct TyepShipment {
     address sender;
-        address recevier;
+        address receiver;
         uint256 pickupTime;
         uint256 deliveryTime;
         uint256 distance;
@@ -31,48 +31,48 @@ struct typeshipment {
 
 }
 
-     typeshipment[] typeshipments;
+     TyepShipment[] tyepShipments;
 
      event  ShipmentCreated(
         address  indexed sender,
-        address indexed  recevier,
+        address indexed  receiver,
         uint256 pickupTime,
         uint256 distance,
-        uint256 price);
+        uint256 price
+        );
 
         event ShipmentInTransit(
-           address  indexed sender,
-        address indexed  recevier,
-        uint256 pickupTime,
-        uint256 pickUpTime);
-event shipmentDelivered(
+        address  indexed sender,
+        address indexed  receiver,
+        uint256 pickUpTime
+        );
+event ShipmentDelivered(
       address  indexed sender,
-        address indexed  recevier,
-        uint256 pickupTime,
+        address indexed  receiver,
         uint deliveryTime
         );
-event shipmentPaid(  address  indexed sender,
-        address indexed  recevier,
-        uint256 pickupTime,
+event ShipmentPaid( 
+        address  indexed sender,
+        address indexed  receiver,
         uint256 amount
         );
-constructor() {
+   constructor() {
     ShipmentCount =0;
-
-}
+    }
 
 
    function createShipment(address  _receiver , uint256 _pickUpTime , uint256 _distance , uint256 _price) public payable {
-    require(msg.value==_price , "payment amount must match the price");
+
+    require(msg.value==_price , "payment amount must match the Price");
 
     Shipment memory shipment=Shipment(msg.sender , _receiver , _pickUpTime , 0 , _distance , _price , ShipmentStatus.PENDING , false );
 
-    Shipments[msg.sender].push(shipment);
+    shipments[msg.sender].push(shipment);
     ShipmentCount++;
 
 
-     typeshipments.push(
-        typeshipment(
+     tyepShipments.push(
+        TyepShipment(
             msg.sender,
             _receiver,
             _pickUpTime,
@@ -89,11 +89,11 @@ constructor() {
 
    function starShipment(address _sender , address _receiver ,  uint256 _index )public {
     Shipment storage shipment=Shipments[_sender] [_index];
-    typeshipment storage typeshipments=typeshipments[_index];
+    TyepShipment storage TyepShipments=TyepShipments[_index];
     require(shipment.receiver==_receiver , "INvalid RECEIVER");
         require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT ALREADY IN TRANSIT");
  shipment.status=ShipmentStatus.IN_TRANSIT;
- typeshipment.status=ShipmentStatus.IN_TRANSIT;
+ TyepShipment.status=ShipmentStatus.IN_TRANSIT;
 
 
  emit ShipmentInTransit(_sender, _receiver, shipment.pickupTime);
@@ -103,21 +103,21 @@ constructor() {
 function completeShipment(address _sender , address _receiver , uint256 _index) public {
 
     Shipment storage shipment=Shipments[_sender][_index];
-    typeshipment storage typeshipment=typeshipment[_index];
+    TyepShipment storage TyepShipment=TyepShipment[_index];
      require(shipment.receiver==_receiver , "INvalid RECEIVER");
         require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT Not IN TRANSIT");
                require(!shipment.isPaid , "Shipment already paid");
 
                 shipment.status=ShipmentStatus.DELIEVED;
-                typeshipment.status=ShipmentStatus.DELIEVED;
-                typeshipment.deliveryTime=block.timestamp;
+                TyepShipment.status=ShipmentStatus.DELIEVED;
+                TyepShipment.deliveryTime=block.timestamp;
 
                 uint256 amount =shipment.price;
                 payable(shipment.sender).transfer(amount);
 
 
        shipment.isPaid=true;
-       typeshipment.isPaid=true;
+       TyepShipment.isPaid=true;
 
 
        emit shipmentDelivered(_sender , _receiver , shipment.deliveryTime);
@@ -130,7 +130,7 @@ function getShipment(address _sender , uint256 _index ) public view returns(
     address , address ,uint256 , uint256 , uint256 , uint256 Shipment, bool)
     {
         Shipment memory shipment=shipment[_sender][index];
-        return(shipment.sender , shipment.recevier , shipment.pickupTime, shipment.deliveryTime,
+        return(shipment.sender , shipment.receiver , shipment.pickupTime, shipment.deliveryTime,
         shipment.distance, shipment.price , shipment.status, shipment.isPaid);
     }
     function getshipmentCount(address _sender ) public view returns(uint256) {
@@ -138,8 +138,8 @@ function getShipment(address _sender , uint256 _index ) public view returns(
 
         
     }
-function getAllTranscation ()     public view returns (typeshipment[] memory){
-    return typeshipment;
+function getAllTranscation ()     public view returns (TyepShipment[] memory){
+    return TyepShipment;
 }
 }
 
