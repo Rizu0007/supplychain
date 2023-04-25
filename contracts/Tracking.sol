@@ -67,12 +67,12 @@ event ShipmentPaid(
 
     Shipment memory shipment=Shipment(msg.sender , _receiver , _pickUpTime , 0 , _distance , _price , ShipmentStatus.PENDING , false );
 
-    shipments[msg.sender].push(shipment);
-    ShipmentCount++;
+       shipments[msg.sender].push(shipment);
+       ShipmentCount++;
 
 
-     tyepShipments.push(
-        TyepShipment(
+       tyepShipments.push(
+         TyepShipment(
             msg.sender,
             _receiver,
             _pickUpTime,
@@ -84,62 +84,74 @@ event ShipmentPaid(
         )
      );
 
-     emit ShipmentCreated(msg.sender, _receiver, _pickUpTime, _distance, _price);
+       emit ShipmentCreated(msg.sender, _receiver, _pickUpTime, _distance, _price);
    }
+
+
 
    function starShipment(address _sender , address _receiver ,  uint256 _index )public {
-    Shipment storage shipment=Shipments[_sender] [_index];
-    TyepShipment storage TyepShipments=TyepShipments[_index];
-    require(shipment.receiver==_receiver , "INvalid RECEIVER");
-        require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT ALREADY IN TRANSIT");
- shipment.status=ShipmentStatus.IN_TRANSIT;
- TyepShipment.status=ShipmentStatus.IN_TRANSIT;
 
+    Shipment storage shipment=shipments[_sender] [_index];
+    TyepShipment storage tyepShipment=tyepShipments[_index];
 
- emit ShipmentInTransit(_sender, _receiver, shipment.pickupTime);
+    require(shipment.receiver==_receiver , "INvalid RECEIVER.");
+    require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT ALREADY IN TRANSIT");
+    shipment.status=ShipmentStatus.IN_TRANSIT;
+    tyepShipment.status=ShipmentStatus.IN_TRANSIT;
+
+    emit ShipmentInTransit(_sender, _receiver, shipment.pickupTime);
+
    }
+
+
 
 
 function completeShipment(address _sender , address _receiver , uint256 _index) public {
 
-    Shipment storage shipment=Shipments[_sender][_index];
-    TyepShipment storage TyepShipment=TyepShipment[_index];
-     require(shipment.receiver==_receiver , "INvalid RECEIVER");
-        require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT Not IN TRANSIT");
-               require(!shipment.isPaid , "Shipment already paid");
+    Shipment storage shipment=shipments[_sender][_index];
+    TyepShipment storage tyepShipment=tyepShipments[_index];
 
-                shipment.status=ShipmentStatus.DELIEVED;
-                TyepShipment.status=ShipmentStatus.DELIEVED;
-                TyepShipment.deliveryTime=block.timestamp;
+    require(shipment.receiver==_receiver , "INvalid RECEIVER");
+    require(shipment.status==ShipmentStatus.PENDING , "SHIPMENT Not IN TRANSIT");
+    require(!shipment.isPaid , "Shipment already paid");
 
-                uint256 amount =shipment.price;
-                payable(shipment.sender).transfer(amount);
+    shipment.status=ShipmentStatus.DELIEVED;
+    tyepShipment.status=ShipmentStatus.DELIEVED;
+    tyepShipment.deliveryTime=block.timestamp;
+    shipment.deliveryTime=block.timestamp;
+
+    uint256 amount =shipment.price;
+    payable(shipment.sender).transfer(amount);
 
 
        shipment.isPaid=true;
-       TyepShipment.isPaid=true;
+       tyepShipment.isPaid=true;
 
 
-       emit shipmentDelivered(_sender , _receiver , shipment.deliveryTime);
-       emit Shipment(_sender , _receiver, amount);
-
-
-}
+       emit ShipmentDelivered(_sender , _receiver , shipment.deliveryTime);
+       emit ShipmentPaid(_sender , _receiver, amount);
+   }
 
 function getShipment(address _sender , uint256 _index ) public view returns(
-    address , address ,uint256 , uint256 , uint256 , uint256 Shipment, bool)
+    address , address ,uint256 , uint256 , uint256 , uint256, ShipmentStatus, bool)
     {
-        Shipment memory shipment=shipment[_sender][index];
+        Shipment memory shipment=shipments[_sender][_index];
         return(shipment.sender , shipment.receiver , shipment.pickupTime, shipment.deliveryTime,
         shipment.distance, shipment.price , shipment.status, shipment.isPaid);
     }
-    function getshipmentCount(address _sender ) public view returns(uint256) {
-        return shipment[_sender].length;
 
-        
+
+
+    function getshipmentCount(address _sender ) public view returns(uint256) {
+        return shipments[_sender].length;    
     }
-function getAllTranscation ()     public view returns (TyepShipment[] memory){
-    return TyepShipment;
-}
+
+
+    function getAllTranscation () public view returns (TyepShipment[] memory)
+    {
+    return tyepShipments;
+    }
+
+
 }
 
