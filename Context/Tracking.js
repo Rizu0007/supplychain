@@ -137,9 +137,149 @@ const getShipmentsCount=async()=>{
    consol.log(transaction);
         
     } catch (error) {
+        console.log("error want WRONG completeShipment" , error)
         
     }
 
  }
+const getShipment=async(index) =>{
+    console.log(index*1);
 
+try {
+    if(!window.ethereum) return "Install METAMASK ";
+
+    const accounts=await window.ethereum.request({
+
+        method:"eth_accounts",
+    });
+
+    const provider=new ethers.providers.JsonRpcProvider();
+    const contract=fetchContract(provider);
+    const shipment=await contract.getShipment(accounts[0] , index*1);
+
+    
+
+    const SingleShipment={
+        sender:shipment[0],
+        receiver: shipment[1],
+        pickUpTime:shipment[2].toNumber(),
+        deliveryTime:shipment[3].toNumber(),
+        distance:shipment[4].toNumber(),
+        price:ethers.utils.formatEther(shipment[5].toString()),
+        isPaid:shipment[7],
+        status:shipment[6],
+    };
+
+    return SingleShipment;
+} catch (error) {
+    console.log("sorry no shipment")
+    
+}
+
+
+}
+const startShipment=async(getProducts)=>{
+
+
+
+    const {receiver , index }=getProducts;
+    try {
+        if(!window.ethereum) return "Install METAMASK ";
+
+        const accounts=await window.ethereum.request({
+
+            method:"eth_accounts",
+        });
+
+        const web3Modal=new Web3Modal();
+        const connection=await web3Modal.connect();
+        const provider=new ethers.providers.Web3Provider(connection);
+        const signer=provider.getSigner();
+        const contract=fetchContract(signer);
+
+   const shipment =await contract.startShipment(
+    accounts[0],
+    receiver,
+    index*1,
+   
+   );
+
+   shipment.wait();
+   consol.log(shipment);
+        
+    } catch (error) {
+        console.log("sorry no shipment" , error);
+        
+    }
+}
+//check wallet
+
+const checkIfWalletConnected=async()=>{
+    try {
+        if(!window.ethereum) return "Install METAMASK ";
+
+        const accounts=await window.ethereum.request({
+
+            method:"eth_accounts",
+        });
+
+       if(accounts.length){
+        setCurrentUser(accounts[0]);
+
+       }else{
+        return "No Account"
+       }
+        
+    } catch (error) {
+        return "No connect"
+        
+    }
+}
+    // connect wallet function
+
+
+    const connectWallet=async()=>{
+        try {
+            if(!window.ethereum) return "Install METAMASK ";
+    
+            const accounts=await window.ethereum.request({
+    
+                method:"eth_requestAccounts",
+            });
+    
+          setCurrentUser(accounts[0]);
+            
+        } catch (error) {
+            return "No something"
+            
+        }
+}
+
+useEffect(()=>{
+    checkIfWalletConnected();
+
+
+},[])
+
+
+return(
+
+    <TrackingContext.Provider
+    value={{
+        connectWallet,
+        CreateShipment,
+        getAllShipment,
+        completeShipment,
+        getShipment,
+        startShipment,
+        getShipmentsCount,
+        DappName,
+        currentUser,
+    }}
+    >
+    {children}
+
+    </TrackingContext.Provider>
+
+)
 }
