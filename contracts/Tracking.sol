@@ -20,7 +20,7 @@ contract Tracking{
     uint256 public ShipmentCount;
      
 struct TyepShipment {
-    address sender;
+        address sender;
         address receiver;
         uint256 pickupTime;
         uint256 deliveryTime;
@@ -56,6 +56,8 @@ event ShipmentPaid(
         address indexed  receiver,
         uint256 amount
         );
+
+         
    constructor() {
     ShipmentCount =0;
     }

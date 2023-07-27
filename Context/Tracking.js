@@ -5,19 +5,19 @@ import {ethers } from 'ethers';
 
 import tracking from '..Context/Tracking.json';
 import { TrackingContext } from './Tracking';
-const COntractAddress="0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const COntractABI=tracking.abi;
+const ContractAddress="0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const ContractABI=tracking.abi;
 
-//Fetch smart 
+//Fetch smart contract
 
 const fetchContract=(signerOrProvider)=>
-new ethers.Contract(COntractAddress , COntractABI ,signerOrProvider);
+new ethers.Contract(ContractAddress , ContractABI ,signerOrProvider);
 
 
 export const TrackingContext=React.createContext();
 export const TrackingProvider=({children})=>{
 
-
+ 
     //State variable
 
 
@@ -26,7 +26,7 @@ const [currentUser , setCurrentUser]=useState("");
 
 
 const CreateShipment=async(items)=>{
-    console.log(items)
+    console.log(items);
 
     const {receiver , pickUpTime , distance , price}=items;
 
@@ -61,7 +61,11 @@ const getAllShipment=async()=>{
     try {
         const provider=new ethers.providers.JsonRpcProvider();
         const contract=fetchContract(provider);
-        const  shipments=await contract.getAllShipment();
+
+
+        const  shipments=await contract.getAllTransactions();
+
+
         const allShipments=shipments.map((shipment)=>({
             sender:shipment.sender,
             receiver: shipment.receiver,
@@ -72,7 +76,7 @@ const getAllShipment=async()=>{
             status:shipment.status,
         
         }))
-        return allShipments
+        return allShipments;
         
     } catch (error) {
         console.log("error want , Getting shipments ")
