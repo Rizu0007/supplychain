@@ -3,8 +3,10 @@ import Web3Modal from 'web3modal';
 import {ethers } from 'ethers';
 
 
-import tracking from '..Context/Tracking.json';
-import { TrackingContext } from './Tracking';
+
+import tracking from '../Context/Tracking.json'
+
+
 const ContractAddress="0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const ContractABI=tracking.abi;
 
@@ -15,6 +17,7 @@ new ethers.Contract(ContractAddress , ContractABI ,signerOrProvider);
 
 
 export const TrackingContext=React.createContext();
+
 export const TrackingProvider=({children})=>{
 
  
@@ -141,11 +144,13 @@ const getShipmentsCount=async()=>{
    consol.log(transaction);
         
     } catch (error) {
-        console.log("error want WRONG completeShipment" , error)
+        console.log("WRONG Complete Shipment" , error)
         
     }
 
  }
+
+
 const getShipment=async(index) =>{
     console.log(index*1);
 
@@ -170,18 +175,20 @@ try {
         deliveryTime:shipment[3].toNumber(),
         distance:shipment[4].toNumber(),
         price:ethers.utils.formatEther(shipment[5].toString()),
-        isPaid:shipment[7],
         status:shipment[6],
-    };
+        isPaid:shipment[7],
 
-    return SingleShipment;
+    };
+ return SingleShipment;
+
+
 } catch (error) {
     console.log("sorry no shipment")
     
 }
-
-
 }
+
+
 const startShipment=async(getProducts)=>{
 
 
@@ -212,11 +219,13 @@ const startShipment=async(getProducts)=>{
    consol.log(shipment);
         
     } catch (error) {
-        console.log("sorry no shipment" , error);
+        console.log("sorry No Shipment" , error);
         
     }
 }
-//check wallet
+
+
+//check wallet connection
 
 const checkIfWalletConnected=async()=>{
     try {
@@ -239,6 +248,8 @@ const checkIfWalletConnected=async()=>{
         
     }
 }
+
+
     // connect wallet function
 
 
@@ -254,10 +265,13 @@ const checkIfWalletConnected=async()=>{
           setCurrentUser(accounts[0]);
             
         } catch (error) {
-            return "No something"
+            return " something Went Wrong"
             
         }
 }
+
+
+//every time check
 
 useEffect(()=>{
     checkIfWalletConnected();
