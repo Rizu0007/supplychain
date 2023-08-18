@@ -119,8 +119,13 @@ function completeShipment(address _sender , address _receiver , uint256 _index) 
 
     shipment.status=ShipmentStatus.DELIEVED;
     tyepShipment.status=ShipmentStatus.DELIEVED;
+
+
+
+     
     tyepShipment.deliveryTime=block.timestamp;
     shipment.deliveryTime=block.timestamp;
+
 
     uint256 amount =shipment.price;
     payable(shipment.sender).transfer(amount);
@@ -133,6 +138,8 @@ function completeShipment(address _sender , address _receiver , uint256 _index) 
        emit ShipmentDelivered(_sender , _receiver , shipment.deliveryTime);
        emit ShipmentPaid(_sender , _receiver, amount);
    }
+
+   
 
 function getShipment(address _sender , uint256 _index ) public view returns(
     address , address ,uint256 , uint256 , uint256 , uint256, ShipmentStatus, bool)

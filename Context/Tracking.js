@@ -28,7 +28,7 @@ const DappName="Product Tracking Dapp"
 const [currentUser , setCurrentUser]=useState("");
 
 
-const CreateShipment=async(items)=>{
+const createShipment=async(items)=>{
     console.log(items);
 
     const {receiver , pickUpTime , distance , price}=items;
@@ -40,7 +40,7 @@ try{
     const signer=provider.getSigner();
     const contract=fetchContract(signer);
 
-    const createItem=await contract.CreateShipment(
+    const createItem=await contract.createShipment(
         receiver,
         new Date(pickUpTime).getTime(),
         distance,
@@ -285,7 +285,7 @@ return(
     <TrackingContext.Provider
     value={{
         connectWallet,
-        CreateShipment,
+        createShipment,
         getAllShipment,
         completeShipment,
         getShipment,
