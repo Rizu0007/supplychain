@@ -4,6 +4,7 @@ import { TrackingContext } from "@/Context/Tracking";
 import Nav1 from './SVG/Nav1';
 import Nav2 from './SVG/Nav2';
 import Nav3 from './SVG/Nav3';
+
 const NavBar = () => {
 
 
@@ -80,7 +81,29 @@ const NavBar = () => {
 
 
 
-    <div className=" flex-1 gap-x-6  items-center justify-end mt-6 space-y-6 md:flex md:space-y-0 md:mt-0 "></div>
+    <div className=" flex-1 gap-x-6  items-center justify-end mt-6 space-y-6 md:flex md:space-y-0 md:mt-0 ">
+
+    {currentUser ?(
+    <p className="flex items-center justify-center gap-x-1 py-2 px-4 text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-full  md:inline-flex">
+    {currentUser.slice(0,20)}..
+
+    
+    </p>
+
+    ):(
+      <button
+      onclick={()=>connectWallet()}
+      className="flex items-center justify-center gap-x-1 py-2 px-4 text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-full  md:inline-flex"
+      >
+      
+  Connect Wallet
+  <Nav3/>
+      </button>
+    )}
+    
+    
+    
+    </div>
     
     </div>
   </div>
